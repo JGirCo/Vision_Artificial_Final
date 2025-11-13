@@ -31,6 +31,7 @@ def get_piece(frame: np.ndarray) -> np.ndarray:
     piece = result_rotated[y : y + h, x : x + w]
     return piece
 
+
 class Classifier(RunCamera):
     def __init__(self, src=0, name="Camera_1"):
         super(Classifier, self).__init__(src, name)
@@ -85,37 +86,37 @@ class Classifier(RunCamera):
             )
         return frame_copy
 
-    def classify_piece(self):
-        with self.lock:
-            piece = (
-                self.current_piece.copy() if self.current_piece is not None else None
-            )
-
-        contours, hierarchy = cv2.findContours(
-            piece, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE  # Two-level hierarchy
-        )
-        print(hierarchy)
-        hole_contours = []
-        for i, h in enumerate(hierarchy[0]):
-            if h[3] == -1:
-                main_piece_contour = contours[i]
-                main_piece_index = i
-            else:
-                hole_contours.append(contours[i])
-        num_holes = len(hole_contours)
-        if num_holes == 0:
-            self.loggerReport.info("Pieza rota detectada")
-        if num_holes == 2:
-            self.loggerReport.info("Tensor detectado")
-        if num_holes == 1:
-            hole_contour = hole_contours[0]
-
-            M_piece = cv2.moments(main_piece_contour)
-            M_holes = cv2.moments(hole_contour)
+    # def classify_piece(self):
+    #     with self.lock:
+    #         piece = (
+    #             self.current_piece.copy() if self.current_piece is not None else None
+    #         )
+    #
+    #     contours, hierarchy = cv2.findContours(
+    #         piece, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE  # Two-level hierarchy
+    #     )
+    #     print(hierarchy)
+    #     hole_contours = []
+    #     for i, h in enumerate(hierarchy[0]):
+    #         if h[3] == -1:
+    #             main_piece_contour = contours[i]
+    #             main_piece_index = i
+    #         else:
+    #             hole_contours.append(contours[i])
+    #     num_holes = len(hole_contours)
+    #     if num_holes == 0:
+    #         self.loggerReport.info("Pieza rota detectada")
+    #     if num_holes == 2:
+    #         self.loggerReport.info("Tensor detectado")
+    #     if num_holes == 1:
+    #         hole_contour = hole_contours[0]
+    #
+    #         M_piece = cv2.moments(main_piece_contour)
+    #         M_holes = cv2.moments(hole_contour)
 
 
 def main() -> None:
-    video_source = "./Vid_Piezas/Zetas/Zetas_Buenas.mp4"
+    video_source = "./Vid_Piezas/Arandelas/Arandelas_Buenas.mp4"
     camera = Classifier(src=video_source)
     camera.start()
 
@@ -125,65 +126,42 @@ def main() -> None:
         while camera.isOpened():
             ret, frame = camera.read()
             if camera.separate_frame():
-                current_frame = camera.read_current()
-                if current_frame is not None:
-                    # Binarizar y obtener contorno externo
-                    binary_cf = bn.binarize(current_frame)
-                    ext_contour_cf, cnt_num_cf = bn.get_external(binary_cf)
+                piece = camera.read_piece()
+                ext_contour, cnt_num_cf = bn.get_external(piece)
 
-                    if cnt_num_cf > 0 and ext_contour_cf is not None and len(ext_contour_cf) >= 3:
-                        # Extraer features y clasificar
-                        features_dict_cf = features.extract_features(binary_cf, ext_contour_cf)
-                        piece_type_cf, condition_cf = features.classify_piece(features_dict_cf)
+                features_dict = features.extract_features(piece, ext_contour)
+                piece_type, condition = features.classify_piece(features_dict)
 
-                        # Dibujar texto en el current_frame
-                        cv2.putText(current_frame, f"{piece_type_cf}-{condition_cf}",
-                                    (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0,
-                                    (0, 255, 0), 2)
-                    else:
-                        cv2.putText(current_frame, "Esperando pieza...",
-                                    (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0,
-                                    (0, 255, 255), 2)
-
-                cv2.imshow("current_frame", current_frame)
+                print(
+                    f"Tipo: {piece_type}, Condición: {condition}, "
+                    f"Circularidad={features_dict['circularity']:.2f}, "
+                    f"Solidity={features_dict['solidity']:.2f}, "
+                    f"Agujeros={features_dict['num_holes']}"
+                )
+                # Dibujar texto en el current_frame
+                frame_text = f"{piece_type}-{condition}"
+                frame_color = (0, 255, 0)
+            elif not camera.piece_in_frame:
+                frame_text = "Esperando pieza..."
+                frame_color = (0, 255, 255)
 
             if not ret or frame is None:
                 time.sleep(0.01)
                 continue
-            
-            # Binarización y obtención de contornos
+
             binary = bn.binarize(frame)
             binaryBGR = cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR)
-            contours = bn.get_contours(binary)
-            ext_contour, cnt_num = bn.get_external(binary)
 
-            # for cnt in contours:
-            #     x, y, w, h = cv2.boundingRect(cnt)
-            #     cv2.rectangle(binaryBGR, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-            if cnt_num > 0 and ext_contour is not None and len(ext_contour) >= 3:
-                # Bounding box
-                x, y, w, h = cv2.boundingRect(ext_contour)
-                cv2.rectangle(binaryBGR, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-                # Clasificación usando features
-                features_dict = features.extract_features(binary, ext_contour)
-                piece_type, condition = features.classify_piece(features_dict)
-
-                # Mostrar resultado en pantalla
-                cv2.putText(binaryBGR, f"{piece_type}-{condition}", (x, y - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-
-                print(f"Tipo: {piece_type}, Condición: {condition}, "
-                      f"Circularidad={features_dict['circularity']:.2f}, "
-                      f"Solidity={features_dict['solidity']:.2f}, "
-                      f"Agujeros={features_dict['num_holes']}")
-            else:
-                # No hay pieza válida en este frame
-                cv2.putText(binaryBGR, "Esperando pieza...", (30, 30),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
-
-            cv2.imshow("Video", binaryBGR)
+            cv2.putText(
+                binaryBGR,
+                frame_text,
+                (30, 30),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.7,
+                frame_color,
+                2,
+            )
+            cv2.imshow("Video", bn.binarize(binaryBGR))
 
             if cv2.waitKey(30) & 0xFF == ord("q"):
                 break

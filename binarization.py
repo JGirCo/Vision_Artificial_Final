@@ -4,8 +4,8 @@ import numpy as np
 
 KERNEL = np.ones((5, 5), np.uint8)
 KERNEL_CLOSE = np.ones((10, 10), np.uint8)
-MIN_AREA_THRESHOLD = 500
-THRESHOLD_VALUE = 150  # The value used in cv2.threshold
+MIN_AREA_THRESHOLD = 5000
+THRESHOLD_VALUE = 90  # The value used in cv2.threshold
 
 Frame = np.ndarray
 Contour = np.ndarray

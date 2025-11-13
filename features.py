@@ -70,18 +70,18 @@ def classify_piece(features):
 
     if num_holes == 1:
         ratio = features["hole_areas"][0] / features["area"]
-        if ratio < 0.2:
-            piece_type = "Anillo"
-        else:
+        print(f"{ratio=}")
+        if ratio < 0.5:
             piece_type = "Arandela"
+        else:
+            piece_type = "Anillo"
     elif num_holes == 2:
         piece_type = "Tensor"
-    elif num_holes == 1 and circularity < 0.7:
+    if num_holes == 1 and circularity < 0.7:
         piece_type = "Zeta"
 
     # Defectos: baja circularidad o baja solidez (Hay que mejorar esto)
-    if solidity < 0.9 or circularity < 0.6:
+    if solidity < 0.9:
         condition = "Defectuosa"
 
     return piece_type, condition
-
