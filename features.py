@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def extract_features(binary, ext_contour):
     if ext_contour is None or len(ext_contour) < 3:
         # Retorna métricas vacías si el contorno no es válido
@@ -11,7 +12,7 @@ def extract_features(binary, ext_contour):
             "solidity": 0,
             "num_holes": 0,
             "hole_areas": [],
-            "hu_moments": np.zeros(7)
+            "hu_moments": np.zeros(7),
         }
 
     # Área y perímetro externos
@@ -28,7 +29,9 @@ def extract_features(binary, ext_contour):
         solidity = 0
 
     # Buscar agujeros internos
-    contours, hierarchy = cv2.findContours(binary, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(
+        binary, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE
+    )
     holes = []
     if hierarchy is not None:
         for i, h in enumerate(hierarchy[0]):
@@ -49,14 +52,15 @@ def extract_features(binary, ext_contour):
         "solidity": solidity,
         "num_holes": num_holes,
         "hole_areas": hole_areas,
-        "hu_moments": hu
+        "hu_moments": hu,
     }
+
 
 def classify_piece(features):
 
-    #Clasifico la pieza en Anillo, Arandela, Tensor o Zeta y determino si está Buena o Defectuosa.
-    
-    #(Hay que mejorar de acuerdo a las formas de las piezas y tal vez agregar más features :))
+    # Clasifico la pieza en Anillo, Arandela, Tensor o Zeta y determino si está Buena o Defectuosa.
+
+    # (Hay que mejorar de acuerdo a las formas de las piezas y tal vez agregar más features :))
     piece_type = "Unknown"
     condition = "Bueno"
 
@@ -66,17 +70,18 @@ def classify_piece(features):
 
     if num_holes == 1:
         ratio = features["hole_areas"][0] / features["area"]
-        if ratio < 0.2:
-            piece_type = "Anillo"
-        else:
+        print(f"{ratio=}")
+        if ratio < 0.5:
             piece_type = "Arandela"
+        else:
+            piece_type = "Anillo"
     elif num_holes == 2:
         piece_type = "Tensor"
-    elif num_holes == 1 and circularity < 0.7:
+    if num_holes == 1 and circularity < 0.7:
         piece_type = "Zeta"
 
     # Defectos: baja circularidad o baja solidez (Hay que mejorar esto)
-    if solidity < 0.9 or circularity < 0.6:
+    if solidity < 0.9:
         condition = "Defectuosa"
 
     return piece_type, condition

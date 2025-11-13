@@ -37,6 +37,7 @@
             pkgs.python3Packages.albumentations
             pkgs.python3Packages.matplotlib
             pkgs.python3Packages.scikit-learn
+            pkgs.python3Packages.colorlog
 
             pkgs.cudaPackages.cudatoolkit
             pkgs.cudaPackages.cudnn
