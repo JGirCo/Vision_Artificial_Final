@@ -5,6 +5,7 @@ import numpy as np
 
 import binarization as bn
 import features
+from typing import Dict, Tuple
 
 EDGE_PADDING = 600
 
@@ -86,33 +87,14 @@ class Classifier(RunCamera):
             )
         return frame_copy
 
-    # def classify_piece(self):
-    #     with self.lock:
-    #         piece = (
-    #             self.current_piece.copy() if self.current_piece is not None else None
-    #         )
-    #
-    #     contours, hierarchy = cv2.findContours(
-    #         piece, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE  # Two-level hierarchy
-    #     )
-    #     print(hierarchy)
-    #     hole_contours = []
-    #     for i, h in enumerate(hierarchy[0]):
-    #         if h[3] == -1:
-    #             main_piece_contour = contours[i]
-    #             main_piece_index = i
-    #         else:
-    #             hole_contours.append(contours[i])
-    #     num_holes = len(hole_contours)
-    #     if num_holes == 0:
-    #         self.loggerReport.info("Pieza rota detectada")
-    #     if num_holes == 2:
-    #         self.loggerReport.info("Tensor detectado")
-    #     if num_holes == 1:
-    #         hole_contour = hole_contours[0]
-    #
-    #         M_piece = cv2.moments(main_piece_contour)
-    #         M_holes = cv2.moments(hole_contour)
+    def classify_piece(self) -> Tuple[str, str, Dict]:
+        piece = self.current_piece.copy()
+
+        ext_contour, cnt_num_cf = bn.get_external(piece)
+
+        features_dict = features.extract_features(piece, ext_contour)
+        piece_type, condition = features.classify_piece(features_dict)
+        return (piece_type, condition, features_dict)
 
 
 def main() -> None:
@@ -126,11 +108,8 @@ def main() -> None:
         while camera.isOpened():
             ret, frame = camera.read()
             if camera.separate_frame():
-                piece = camera.read_piece()
-                ext_contour, cnt_num_cf = bn.get_external(piece)
-
-                features_dict = features.extract_features(piece, ext_contour)
-                piece_type, condition = features.classify_piece(features_dict)
+                print(camera.classify_piece())
+                piece_type, condition, features_dict = camera.classify_piece()
 
                 print(
                     f"Tipo: {piece_type}, Condición: {condition}, "
