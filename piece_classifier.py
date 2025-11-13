@@ -1,11 +1,34 @@
 import cv2
 from camera import RunCamera
 import time
+import numpy as np
 
 import binarization as bn
 
-
 EDGE_PADDING = 150
+
+
+def get_piece(frame: np.ndarray) -> np.ndarray:
+    ext_contour, _ = bn.get_external(frame)
+    rot_rect = cv2.minAreaRect(ext_contour)
+
+    center, size, angle = rot_rect
+    w, h = size
+
+    if w < h:
+        # If the width is smaller than the height, swap them and adjust the angle.
+        w, h = h, w
+        angle += 90.0
+
+    piece_center = center
+    rot_mat = cv2.getRotationMatrix2D(piece_center, angle, 1.0)
+    result_rotated = cv2.warpAffine(
+        frame, rot_mat, frame.shape[1::-1], flags=cv2.INTER_LINEAR
+    )
+    cnt_rotated, _ = bn.get_external(result_rotated)
+    x, y, w, h = cv2.boundingRect(cnt_rotated)
+    piece = result_rotated[y : y + h, x : x + w]
+    return piece
 
 
 class Classifier(RunCamera):
@@ -14,6 +37,7 @@ class Classifier(RunCamera):
         self.piece_in_frame = False
         self.new_piece_incoming = True
         self.current_frame = None
+        self.get_piece = None
 
     def separate_frame(self) -> bool:
         """Se asegura de que la pieza está completa en el frame y es válida para el procesamiento.
@@ -40,7 +64,8 @@ class Classifier(RunCamera):
 
         if self.new_piece_incoming and self.piece_in_frame and cnt_num == 1:
             with self.lock:
-                self.current_frame = frame_copy
+                self.current_frame = binary
+                self.current_piece = get_piece(binary)
             self.loggerReport.logger.info("nueva pieza en frame y válida")
             self.new_piece_incoming = False
             return True
@@ -50,6 +75,13 @@ class Classifier(RunCamera):
         with self.lock:
             frame_copy = (
                 self.current_frame.copy() if self.current_frame is not None else None
+            )
+        return frame_copy
+
+    def read_piece(self):
+        with self.lock:
+            frame_copy = (
+                self.current_piece.copy() if self.current_piece is not None else None
             )
         return frame_copy
 
@@ -65,7 +97,7 @@ def main() -> None:
         while camera.isOpened():
             ret, frame = camera.read()
             if camera.separate_frame():
-                current_frame = camera.read_current()
+                current_frame = camera.read_piece()
                 cv2.imshow("current_frame", current_frame)
 
             if not ret or frame is None:
@@ -80,8 +112,7 @@ def main() -> None:
             #     cv2.rectangle(binaryBGR, (x, y), (x + w, y + h), (0, 255, 0), 2)
             x, y, w, h = cv2.boundingRect(ext_contour)
             cv2.rectangle(binaryBGR, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-            cv2.imshow("Video", binaryBGR)
+            # cv2.imshow("Video", binaryBGR)
 
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
