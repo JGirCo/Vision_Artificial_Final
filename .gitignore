@@ -9,3 +9,11 @@ __pycache__/
 
 # Ignorar configuraciones de VSCode
 .vscode/
+
+# Ignorar archivos de desarollo local
+flake.*
+.envrc
+.direnv
+
+# Ignorar logs
+*.log

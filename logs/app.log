@@ -1,0 +1,235 @@
+2025-11-13 12:47:03 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:47:04 - INFO - Video FPS: 60.86806268725813[0m
+2025-11-13 12:47:04 - INFO - Creating Camera thread[0m
+2025-11-13 12:47:04 - INFO - Starting thread, time between frames is 0.016429[0m
+2025-11-13 12:47:18 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 12:47:22 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:47:22 - INFO - Video FPS: 60.86806268725813[0m
+2025-11-13 12:47:23 - INFO - Creating Camera thread[0m
+2025-11-13 12:47:23 - INFO - Starting thread, time between frames is 0.016429[0m
+2025-11-13 12:47:27 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:30 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:33 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:37 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:39 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:41 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:44 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:47 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:47:47 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 12:49:27 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:49:27 - WARNING - Could not determine FPS for ./Vid_Piezas/Zetas/Tensores_Buenos.mp4. Defaulting to 30.[0m
+2025-11-13 12:49:28 - WARNING - Camera not initialized[0m
+2025-11-13 12:49:29 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 12:49:47 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:49:47 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 12:49:48 - INFO - Creating Camera thread[0m
+2025-11-13 12:49:48 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 12:49:57 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:00 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:03 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:04 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 12:50:08 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:50:08 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 12:50:08 - INFO - Creating Camera thread[0m
+2025-11-13 12:50:08 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 12:50:18 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:21 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:24 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:26 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:27 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:28 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:29 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:50:30 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 12:57:03 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:57:03 - INFO - Video FPS: 60.86806268725813[0m
+2025-11-13 12:57:04 - INFO - Creating Camera thread[0m
+2025-11-13 12:57:04 - INFO - Starting thread, time between frames is 0.016429[0m
+2025-11-13 12:57:11 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 12:57:48 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:57:48 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 12:57:49 - INFO - Creating Camera thread[0m
+2025-11-13 12:57:49 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 12:57:56 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:57:59 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:57:59 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 12:58:29 - INFO - Init constructor RunCamera[0m
+2025-11-13 12:58:30 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 12:58:30 - INFO - Creating Camera thread[0m
+2025-11-13 12:58:30 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 12:58:40 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:58:43 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:58:45 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:58:48 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:58:49 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 12:58:49 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 13:00:20 - INFO - Init constructor RunCamera[0m
+2025-11-13 13:00:20 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 13:00:21 - INFO - Creating Camera thread[0m
+2025-11-13 13:00:21 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 13:00:30 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:00:32 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 13:00:38 - INFO - Init constructor RunCamera[0m
+2025-11-13 13:00:38 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 13:00:39 - INFO - Creating Camera thread[0m
+2025-11-13 13:00:39 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 13:00:49 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:00:51 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 13:00:58 - INFO - Init constructor RunCamera[0m
+2025-11-13 13:00:58 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 13:00:59 - INFO - Creating Camera thread[0m
+2025-11-13 13:00:59 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 13:01:09 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:12 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:14 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:17 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:20 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:22 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:23 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:26 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:28 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:31 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:34 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 13:01:36 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:27:34 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:27:34 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:27:35 - INFO - Creating Camera thread[0m
+2025-11-13 14:27:35 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:27:36 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:27:39 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:27:39 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:27:40 - INFO - Creating Camera thread[0m
+2025-11-13 14:27:40 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:27:41 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:31:58 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:31:58 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:31:59 - INFO - Creating Camera thread[0m
+2025-11-13 14:31:59 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:32:00 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:32:32 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:32:32 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:32:32 - INFO - Creating Camera thread[0m
+2025-11-13 14:32:32 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:32:33 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:37:01 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:37:01 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:37:02 - INFO - Creating Camera thread[0m
+2025-11-13 14:37:02 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:37:03 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:38:13 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:38:13 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:38:14 - INFO - Creating Camera thread[0m
+2025-11-13 14:38:14 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:38:23 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:38:26 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:38:29 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:38:31 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:38:33 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:38:35 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:38:47 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:38:47 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:38:47 - INFO - Creating Camera thread[0m
+2025-11-13 14:38:47 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:38:57 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:38:59 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:39:58 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:39:58 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:39:58 - INFO - Creating Camera thread[0m
+2025-11-13 14:39:58 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:40:08 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:40:09 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:40:16 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:40:16 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:40:16 - INFO - Creating Camera thread[0m
+2025-11-13 14:40:16 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:40:26 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:40:27 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:41:00 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:41:00 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:41:01 - INFO - Creating Camera thread[0m
+2025-11-13 14:41:01 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:41:10 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:41:13 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:41:14 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:42:01 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:42:01 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:42:02 - INFO - Creating Camera thread[0m
+2025-11-13 14:42:02 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:42:11 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:42:13 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:42:21 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:42:21 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:42:22 - INFO - Creating Camera thread[0m
+2025-11-13 14:42:22 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:42:31 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:42:34 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:42:40 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:42:40 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:42:41 - INFO - Creating Camera thread[0m
+2025-11-13 14:42:41 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:42:50 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:42:53 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:42:55 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:43:46 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:43:46 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:43:46 - INFO - Creating Camera thread[0m
+2025-11-13 14:43:46 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:43:56 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:43:59 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:44:02 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:44:04 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:44:05 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:44:06 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:48:26 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:48:26 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:48:26 - INFO - Creating Camera thread[0m
+2025-11-13 14:48:26 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:48:36 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:50:54 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:50:54 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:50:55 - INFO - Creating Camera thread[0m
+2025-11-13 14:50:55 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:51:05 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:51:08 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:51:10 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:51:11 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:51:58 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:51:59 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:51:59 - INFO - Creating Camera thread[0m
+2025-11-13 14:51:59 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:52:09 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:09 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:52:18 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:52:18 - INFO - Video FPS: 60.94975886625927[0m
+2025-11-13 14:52:18 - INFO - Creating Camera thread[0m
+2025-11-13 14:52:18 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:52:28 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:31 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:34 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:36 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:37 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:39 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:41 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:42 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:45 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:47 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:50 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:54 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:52:58 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:53:00 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:56:29 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:56:30 - INFO - Video FPS: 60.94866700772888[0m
+2025-11-13 14:56:30 - INFO - Creating Camera thread[0m
+2025-11-13 14:56:30 - INFO - Starting thread, time between frames is 0.016407[0m
+2025-11-13 14:56:35 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:56:38 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:56:38 - INFO - Stopping camera thread and releasing resources[0m
+2025-11-13 14:56:56 - INFO - Init constructor RunCamera[0m
+2025-11-13 14:56:56 - INFO - Video FPS: 60.983977767866335[0m
+2025-11-13 14:56:56 - INFO - Creating Camera thread[0m
+2025-11-13 14:56:56 - INFO - Starting thread, time between frames is 0.016398[0m
+2025-11-13 14:57:02 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:57:04 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:57:06 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:57:08 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:57:10 - INFO - nueva pieza en frame y válida[0m
+2025-11-13 14:57:11 - INFO - Stopping camera thread and releasing resources[0m
