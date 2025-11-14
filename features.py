@@ -2,6 +2,50 @@ import cv2
 import numpy as np
 from typing import Dict, Tuple, Any
 
+import joblib
+import pandas as pd
+import numpy as np
+
+
+def load_and_predict_zeta(new_data):
+    # 1. Define file names (must match the saving file names)
+    model_filename = "svc_model_zetas.joblib"
+    scaler_filename = "scaler_zetas.joblib"
+    pca_filename = "pca_zetas.joblib"
+
+    # 2. Load the trained objects
+    loaded_model = joblib.load(model_filename)
+    loaded_scaler = joblib.load(scaler_filename)
+    loaded_pca = joblib.load(pca_filename)
+
+    # 3. Apply the transformations in the same order as training
+    new_data_scaled = loaded_scaler.transform(new_data)
+    new_data_transformed = loaded_pca.transform(new_data_scaled)
+
+    # 4. Make a prediction
+    prediction = loaded_model.predict(new_data_transformed)
+    return prediction
+
+
+def load_and_predict_anillo(new_data):
+    # 1. Define file names (must match the saving file names)
+    model_filename = "svc_model_anillos.joblib"
+    scaler_filename = "scaler_anillos.joblib"
+    pca_filename = "pca_anillos.joblib"
+
+    # 2. Load the trained objects
+    loaded_model = joblib.load(model_filename)
+    loaded_scaler = joblib.load(scaler_filename)
+    loaded_pca = joblib.load(pca_filename)
+
+    # 3. Apply the transformations in the same order as training
+    new_data_scaled = loaded_scaler.transform(new_data)
+    new_data_transformed = loaded_pca.transform(new_data_scaled)
+
+    # 4. Make a prediction
+    prediction = loaded_model.predict(new_data_transformed)
+    return prediction
+
 
 def extract_features(
     binary: np.ndarray, ext_contour: np.ndarray | None
@@ -59,12 +103,12 @@ def extract_features(
     }
 
 
-def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
+def classify_piece(features: Dict[str, Any]) -> Tuple[str, bool]:
     # Clasifico la pieza en Anillo, Arandela, Tensor o Zeta y determino si está Buena o Defectuosa.
 
     # (Hay que mejorar de acuerdo a las formas de las piezas y tal vez agregar más features :))
     piece_type = "Unknown"
-    condition = "Bueno"
+    condition = 1
 
     num_holes = features["num_holes"]
     circularity = features["circularity"]
@@ -72,18 +116,59 @@ def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
 
     if num_holes == 1:
         ratio = features["hole_areas"][0] / features["area"]
-        print(f"{ratio=}")
         if ratio < 0.5:
             piece_type = "Arandela"
         else:
             piece_type = "Anillo"
+            prediction = load_and_predict_anillo(
+                np.array(
+                    [
+                        [
+                            features["area"],
+                            features["perimeter"],
+                            features["circularity"],
+                            features["solidity"],
+                            features["num_holes"],
+                            features["hole_areas"][0],
+                            features["hu_moments"][0],
+                            features["hu_moments"][1],
+                            features["hu_moments"][2],
+                            features["hu_moments"][3],
+                            features["hu_moments"][4],
+                            features["hu_moments"][5],
+                            features["hu_moments"][6],
+                        ]
+                    ]
+                )
+            )
+
     elif num_holes == 2:
         piece_type = "Tensor"
     if num_holes == 1 and circularity < 0.7:
         piece_type = "Zeta"
-
-    # Defectos: baja circularidad o baja solidez (Hay que mejorar esto)
-    if solidity < 0.9:
-        condition = "Defectuosa"
+        prediction = load_and_predict_zeta(
+            np.array(
+                [
+                    [
+                        features["area"],
+                        features["perimeter"],
+                        features["circularity"],
+                        features["solidity"],
+                        features["num_holes"],
+                        features["hole_areas"][0],
+                        features["hu_moments"][0],
+                        features["hu_moments"][1],
+                        features["hu_moments"][2],
+                        features["hu_moments"][3],
+                        features["hu_moments"][4],
+                        features["hu_moments"][5],
+                        features["hu_moments"][6],
+                    ]
+                ]
+            )
+        )
+    condition = prediction
+    if piece_type == "Unknown":
+        condition = 0
 
     return piece_type, condition

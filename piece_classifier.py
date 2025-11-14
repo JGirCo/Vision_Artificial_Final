@@ -287,8 +287,8 @@ def main(video_source) -> None:
             if camera.separate_frame():
                 piece = camera.read_piece()
                 piece_type, condition, features_dict = camera.classify_piece()
-                index = save_from_type(piece, piece_type)
-                save_features_to_csv(index, features_dict, piece_type, piece_condition)
+                # index = save_from_type(piece, piece_type)
+                # save_features_to_csv(index, features_dict, piece_type, piece_condition)
 
                 print(
                     f"Tipo: {piece_type}, Condición: {condition}, "
@@ -297,8 +297,12 @@ def main(video_source) -> None:
                     f"Agujeros={features_dict['num_holes']}"
                 )
                 # Dibujar texto en el current_frame
-                frame_text = f"{piece_type}-{condition}"
-                frame_color = (0, 255, 0)
+                if not condition:
+                    frame_color = (0, 0, 255)
+                    frame_text = "Pieza defectuosa"
+                else:
+                    frame_text = f"{piece_type}"
+                    frame_color = (0, 255, 0)
 
             elif not camera.piece_in_frame:
                 frame_text = "Esperando pieza..."
@@ -320,10 +324,10 @@ def main(video_source) -> None:
                 frame_color,
                 2,
             )
-            # cv2.imshow("Video", bn.binarize(binaryBGR))
+            cv2.imshow("Video", binaryBGR)
 
-            # if cv2.waitKey(30) & 0xFF == ord("q"):
-            #     return
+            if cv2.waitKey(30) & 0xFF == ord("q"):
+                return
     except Exception as e:
         print(f"⚠️ Error al procesar {video_source}: {e}")
     finally:
@@ -333,4 +337,5 @@ def main(video_source) -> None:
 
 
 if __name__ == "__main__":
-    process_videos()
+    # process_videos()
+    main("./Vid_Piezas/Zetas/Zetas_Buenas.mp4")
