@@ -16,7 +16,7 @@ import pandas as pd
 EDGE_PADDING = 600
 
 
-def save_features_to_csv(piece_index, features_dict, piece_type):
+def save_features_to_csv(piece_index, features_dict, piece_type, piece_condition):
     """
     Guarda los datos de la pieza en un archivo CSV específico para el piece_type usando Pandas.
     Aclana el diccionario de características, incluyendo hu_moments en 7 columnas
@@ -42,21 +42,14 @@ def save_features_to_csv(piece_index, features_dict, piece_type):
         print(f"Error al crear el directorio '{target_dir}': {e}")
         return None
 
-    # 2. Aplanar los datos del diccionario en una sola fila (lista o serie)
-
-    # Asumimos que la estructura del diccionario es fija y predecible.
-
-    # Obtener el primer área del agujero, o 0 si la lista está vacía
     hole_area_value = (
         features_dict["hole_areas"][0] if features_dict["hole_areas"] else 0
     )
 
-    # Descomponer hu_moments (asumiendo que es un array/lista de 7 elementos)
     hu_moments_list = features_dict["hu_moments"].flatten().tolist()
-
-    # 3. Construir la fila de datos en el orden deseado
     data_row = [
         piece_index,  # Columna 0: piece_id (vínculo con la imagen)
+        piece_condition,
         features_dict["area"],  # Columna 1
         features_dict["perimeter"],  # Columna 2
         features_dict["circularity"],  # Columna 3
@@ -65,9 +58,9 @@ def save_features_to_csv(piece_index, features_dict, piece_type):
         hole_area_value,  # Columna 6: Primera área del agujero
     ] + hu_moments_list  # Columna 7-13: Los 7 Hu Moments
 
-    # 4. Definir los nombres de las columnas para el CSV
     column_names = [
         "piece_id",
+        "Roto",
         "col_1",
         "col_2",
         "col_3",
@@ -83,17 +76,10 @@ def save_features_to_csv(piece_index, features_dict, piece_type):
         "Hu_7",
     ]
 
-    # 5. Crear el DataFrame de Pandas
     df_new_row = pd.DataFrame([data_row], columns=column_names)
 
-    # 6. Escribir/Anexar al archivo CSV
     try:
-        if not os.path.exists(csv_file_path):
-            # Escribir con encabezado si el archivo no existe
-            df_new_row.to_csv(csv_file_path, index=False, header=True, mode="w")
-        else:
-            # Anexar sin encabezado si el archivo ya existe
-            df_new_row.to_csv(csv_file_path, index=False, header=False, mode="a")
+        df_new_row.to_csv(csv_file_path, index=False, header=False, mode="a")
 
         print(f"📝 Datos de la pieza {piece_index} guardados en: {csv_file_path}")
         return csv_file_path
@@ -289,6 +275,8 @@ def process_videos() -> None:
 
 def main(video_source) -> None:
     camera = Classifier(src=video_source)
+    piece_condition = 0 if "Mal" in video_source else 1
+    print(f"{piece_condition=}")
     camera.start()
 
     # Wait for first frame
@@ -300,7 +288,7 @@ def main(video_source) -> None:
                 piece = camera.read_piece()
                 piece_type, condition, features_dict = camera.classify_piece()
                 index = save_from_type(piece, piece_type)
-                save_features_to_csv(index, features_dict, piece_type)
+                save_features_to_csv(index, features_dict, piece_type, piece_condition)
 
                 print(
                     f"Tipo: {piece_type}, Condición: {condition}, "
