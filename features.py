@@ -38,6 +38,20 @@ def extract_features(
     else:
         solidity = 0
 
+    # Convexity Defects: mide concavidades en el contorno
+    defects_depths = []
+    if len(ext_contour) >= 3:
+        hull_indices = cv2.convexHull(ext_contour, returnPoints=False)
+        defects = cv2.convexityDefects(ext_contour, hull_indices)
+        if defects is not None:
+            for i in range(defects.shape[0]):
+                s, e, f, d = defects[i, 0]
+                depth = d / 256.0  # OpenCV devuelve la distancia multiplicada por 256
+                defects_depths.append(depth)
+
+    max_defect_depth = max(defects_depths) if defects_depths else 0.0
+    mean_defect_depth = float(np.mean(defects_depths)) if defects_depths else 0.0
+
     # Buscar agujeros internos
     contours, hierarchy = cv2.findContours(
         binary, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE
@@ -101,6 +115,8 @@ def extract_features(
         "compactness": compactness,
         "hole_offset": hole_offset,
         "fourier_desc": fourier_desc,
+        "max_defect_depth": max_defect_depth,
+        "mean_defect_depth": mean_defect_depth,
     }
 
 def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
@@ -114,6 +130,8 @@ def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
     aspect_ratio = features["aspect_ratio"]
     compactness = features["compactness"]
     hole_offset = features["hole_offset"]
+    norm_max_defect = features["max_defect_depth"] / (features["perimeter"] + 1e-9)
+    norm_mean_defect = features["mean_defect_depth"] / (features["perimeter"] + 1e-9)
 
     if num_holes == 1 and features["area"] > 0:
         ratio = features["hole_areas"][0] / features["area"]
@@ -140,6 +158,10 @@ def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
             30 <= hole_offset <= 43
         ):
             piece_type = "Zeta"
+            # if features["max_defect_depth"] > 15:  # ajujstar
+            #     condition = "Defectuosa"
+            # else:
+            #     condition = "Bueno"
         else:
             piece_type = "Unknown"
 
@@ -153,3 +175,7 @@ def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
     return piece_type, condition
 
 # solidity 0.7 0.9, excentricudad 0.50 0.90, aspect_ratio 1.20 1.85, compactness 45 70, hole_offset 30 43
+
+# Tipo: Zeta, Condición: Bueno, Circularidad=0.19, Solidity=0.72, Excentricidad=0.77, Aspect Ratio=1.28, Compactness=67.59 , Hole Offset=30.36
+
+# Tipo: Zeta, Condición: Bueno, Circularidad=0.19, Solidity=0.71, Excentricidad=0.74, Aspect Ratio=1.33, Compactness=67.90 , Hole Offset=30.08

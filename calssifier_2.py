@@ -98,7 +98,7 @@ class Classifier(RunCamera):
 
 
 def main() -> None:
-    video_source = "./Vid_Piezas//Zetas_Buenas.mp4"
+    video_source = "./Vid_Piezas/Zetas/Zetas_Malas.mp4"
     camera = Classifier(src=video_source)
     camera.start()
 
@@ -108,7 +108,6 @@ def main() -> None:
         while camera.isOpened():
             ret, frame = camera.read()
             if camera.separate_frame():
-                print(camera.classify_piece())
                 piece_type, condition, features_dict = camera.classify_piece()
 
                 print(
@@ -120,11 +119,15 @@ def main() -> None:
                     f", Aspect Ratio={features_dict['aspect_ratio']:.2f}"
                     f", Compactness={features_dict['compactness']:.2f} "
                     f", Hole Offset={features_dict['hole_offset']:.2f}"
-                    f", ratio ="
+                    f", Max Defect Depth={features_dict['max_defect_depth']:.2f}"
+                    f", Norm Mean Defect Depth={features_dict['mean_defect_depth'] / (features_dict['perimeter'] + 1e-9):.4f}"
                 )
-                # Dibujar texto en el current_frame
+
                 frame_text = f"{piece_type}-{condition}"
                 frame_color = (0, 255, 0)
+
+                # Mostrar también el frame binarizado de la pieza reconocida
+                cv2.imshow("Frame Binarizado", cv2.resize(camera.read_current(), None, fx=0.3, fy=0.3, interpolation=cv2.INTER_AREA))
             elif not camera.piece_in_frame:
                 frame_text = "Esperando pieza..."
                 frame_color = (0, 255, 255)
@@ -133,11 +136,9 @@ def main() -> None:
                 time.sleep(0.01)
                 continue
 
-            binary = bn.binarize(frame)
-            binaryBGR = cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR)
-
+            # --- Aquí dibujamos el tag sobre el video RGB ---
             cv2.putText(
-                binaryBGR,
+                frame,
                 frame_text,
                 (30, 30),
                 cv2.FONT_HERSHEY_SIMPLEX,
@@ -145,7 +146,9 @@ def main() -> None:
                 frame_color,
                 2,
             )
-            cv2.imshow("Video", bn.binarize(binaryBGR))
+
+            # Mostrar el video original con el tag
+            cv2.imshow("Video RGB", cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA))
 
             if cv2.waitKey(30) & 0xFF == ord("q"):
                 break
