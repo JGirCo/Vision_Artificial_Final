@@ -2,11 +2,56 @@ import cv2
 import numpy as np
 from typing import Dict, Tuple, Any
 
+import joblib
+import pandas as pd
+import numpy as np
+
+
+def load_and_predict_zeta(new_data):
+    # 1. Define file names (must match the saving file names)
+    model_filename = "svc_model_zetas.joblib"
+    scaler_filename = "scaler_zetas.joblib"
+    pca_filename = "pca_zetas.joblib"
+
+    # 2. Load the trained objects
+    loaded_model = joblib.load(model_filename)
+    loaded_scaler = joblib.load(scaler_filename)
+    loaded_pca = joblib.load(pca_filename)
+
+    # 3. Apply the transformations in the same order as training
+    new_data_scaled = loaded_scaler.transform(new_data)
+    new_data_transformed = loaded_pca.transform(new_data_scaled)
+
+    # 4. Make a prediction
+    prediction = loaded_model.predict(new_data_transformed)
+    return prediction
+
+
+def load_and_predict_anillo(new_data):
+    # 1. Define file names (must match the saving file names)
+    model_filename = "svc_model_anillos.joblib"
+    scaler_filename = "scaler_anillos.joblib"
+    pca_filename = "pca_anillos.joblib"
+
+    # 2. Load the trained objects
+    loaded_model = joblib.load(model_filename)
+    loaded_scaler = joblib.load(scaler_filename)
+    loaded_pca = joblib.load(pca_filename)
+
+    # 3. Apply the transformations in the same order as training
+    new_data_scaled = loaded_scaler.transform(new_data)
+    new_data_transformed = loaded_pca.transform(new_data_scaled)
+
+    # 4. Make a prediction
+    prediction = loaded_model.predict(new_data_transformed)
+    return prediction
+
 
 def extract_features(
     binary: np.ndarray, ext_contour: np.ndarray | None
 ) -> Dict[str, Any]:
     if ext_contour is None or len(ext_contour) < 3:
+        # Retorna métricas vacías si el contorno no es válido
         return {
             "area": 0,
             "perimeter": 0,
@@ -15,11 +60,6 @@ def extract_features(
             "num_holes": 0,
             "hole_areas": [],
             "hu_moments": np.zeros(7),
-            "excentricidad": 0,
-            "aspect_ratio": 0,
-            "compactness": 0,
-            "hole_offset": 0,
-            "fourier_desc": np.zeros(10),
         }
 
     # Área y perímetro externos
@@ -27,10 +67,7 @@ def extract_features(
     peri_ext = cv2.arcLength(ext_contour, True)
     circularity = 4 * np.pi * area_ext / (peri_ext**2 + 1e-9)
 
-    # Compactness
-    compactness = (peri_ext**2) / (area_ext + 1e-9)
-
-    # Convex hull y solidity
+    # Convex hull y solidity (solo si hay puntos suficientes) Me ayuda a encontrar roturas o irregularidades (Defectos)
     if len(ext_contour) >= 3:
         hull = cv2.convexHull(ext_contour)
         hull_area = cv2.contourArea(hull) if len(hull) > 0 else area_ext
@@ -45,7 +82,7 @@ def extract_features(
     holes = []
     if hierarchy is not None:
         for i, h in enumerate(hierarchy[0]):
-            if h[3] != -1:
+            if h[3] != -1:  # contorno con padre → agujero interno
                 holes.append(contours[i])
 
     num_holes = len(holes)
@@ -55,39 +92,6 @@ def extract_features(
     moments = cv2.moments(ext_contour)
     hu = cv2.HuMoments(moments).flatten()
 
-    # Excentricidad
-    if len(ext_contour) >= 5:
-        ellipse = cv2.fitEllipse(ext_contour)
-        (_, axes, _) = ellipse
-        major, minor = axes
-        excentricidad = major / minor if minor > 0 else 0
-    else:
-        excentricidad = 0
-
-    # Aspect ratio
-    rect = cv2.minAreaRect(ext_contour)
-    (_, (w, h), _) = rect
-    aspect_ratio = max(w, h) / (min(w, h) + 1e-9)
-
-    # Hole offset (si hay agujero principal)
-    hole_offset = 0
-    if num_holes > 0:
-        # Centroide pieza
-        cx_piece = int(moments["m10"] / (moments["m00"] + 1e-9))
-        cy_piece = int(moments["m01"] / (moments["m00"] + 1e-9))
-        # Centroide agujero principal
-        m_hole = cv2.moments(holes[0])
-        cx_hole = int(m_hole["m10"] / (m_hole["m00"] + 1e-9))
-        cy_hole = int(m_hole["m01"] / (m_hole["m00"] + 1e-9))
-        hole_offset = np.sqrt((cx_piece - cx_hole)**2 + (cy_piece - cy_hole)**2)
-
-    # Fourier descriptors (primeros 10 coeficientes normalizados)
-    contour_complex = np.empty(len(ext_contour), dtype=complex)
-    contour_complex.real = ext_contour[:, 0, 0]
-    contour_complex.imag = ext_contour[:, 0, 1]
-    fourier_result = np.fft.fft(contour_complex)
-    fourier_desc = np.abs(fourier_result[:10]) / (np.abs(fourier_result[0]) + 1e-9)
-
     return {
         "area": area_ext,
         "perimeter": peri_ext,
@@ -96,60 +100,75 @@ def extract_features(
         "num_holes": num_holes,
         "hole_areas": hole_areas,
         "hu_moments": hu,
-        "excentricidad": excentricidad,
-        "aspect_ratio": aspect_ratio,
-        "compactness": compactness,
-        "hole_offset": hole_offset,
-        "fourier_desc": fourier_desc,
     }
 
-def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
+
+def classify_piece(features: Dict[str, Any]) -> Tuple[str, bool]:
+    # Clasifico la pieza en Anillo, Arandela, Tensor o Zeta y determino si está Buena o Defectuosa.
+
+    # (Hay que mejorar de acuerdo a las formas de las piezas y tal vez agregar más features :))
     piece_type = "Unknown"
-    condition = "Bueno"
+    condition = 1
 
     num_holes = features["num_holes"]
     circularity = features["circularity"]
     solidity = features["solidity"]
-    excentricidad = features["excentricidad"]
-    aspect_ratio = features["aspect_ratio"]
-    compactness = features["compactness"]
-    hole_offset = features["hole_offset"]
 
-    if num_holes == 1 and features["area"] > 0:
+    if num_holes == 1:
         ratio = features["hole_areas"][0] / features["area"]
-        print(f"{ratio=}")
-        if ratio < 0.4 and circularity > 0.7:
-            if (1.0 <= aspect_ratio <= 1.08):
-                piece_type = "Arandela"
+        if ratio < 0.5:
+            piece_type = "Arandela"
         else:
-            if circularity > 0.8 and excentricidad >= 0.94 and aspect_ratio <= 1.08:
-                piece_type = "Anillo"
-            else:
-                piece_type = "Unknown"
+            piece_type = "Anillo"
+            prediction = load_and_predict_anillo(
+                np.array(
+                    [
+                        [
+                            features["area"],
+                            features["perimeter"],
+                            features["circularity"],
+                            features["solidity"],
+                            features["num_holes"],
+                            features["hole_areas"][0],
+                            features["hu_moments"][0],
+                            features["hu_moments"][1],
+                            features["hu_moments"][2],
+                            features["hu_moments"][3],
+                            features["hu_moments"][4],
+                            features["hu_moments"][5],
+                            features["hu_moments"][6],
+                        ]
+                    ]
+                )
+            )
 
     elif num_holes == 2:
         piece_type = "Tensor"
-
-    # Zeta: 1 agujero pero forma irregular
-    if num_holes == 1 and circularity < 0.3:
-        if (
-            0.7 <= solidity <= 0.9 and
-            0.50 <= excentricidad <= 0.90 and
-            1.20 <= aspect_ratio <= 1.85 and
-            45 <= compactness <= 70 and
-            30 <= hole_offset <= 43
-        ):
-            piece_type = "Zeta"
-        else:
-            piece_type = "Unknown"
-
-    # Defectos: baja circularidad o baja solidez
-
+    if num_holes == 1 and circularity < 0.7:
+        piece_type = "Zeta"
+        prediction = load_and_predict_zeta(
+            np.array(
+                [
+                    [
+                        features["area"],
+                        features["perimeter"],
+                        features["circularity"],
+                        features["solidity"],
+                        features["num_holes"],
+                        features["hole_areas"][0],
+                        features["hu_moments"][0],
+                        features["hu_moments"][1],
+                        features["hu_moments"][2],
+                        features["hu_moments"][3],
+                        features["hu_moments"][4],
+                        features["hu_moments"][5],
+                        features["hu_moments"][6],
+                    ]
+                ]
+            )
+        )
+    condition = prediction
     if piece_type == "Unknown":
-        condition = "Defectuosa"
-    else:
-        condition = "Bueno"
+        condition = 0
 
     return piece_type, condition
-
-# solidity 0.7 0.9, excentricudad 0.50 0.90, aspect_ratio 1.20 1.85, compactness 45 70, hole_offset 30 43
