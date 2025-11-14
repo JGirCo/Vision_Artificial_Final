@@ -48,10 +48,12 @@ class RunCamera:
     def stop(self):
         self.loggerReport.logger.info("Stopping camera thread and releasing resources")
         self.stopped = True
-        if hasattr(self, "cam_thread") and self.cam_thread.is_alive():
-            self.cam_thread.join(timeout=2)
         if hasattr(self, "stream") and self.stream.isOpened():
             self.stream.release()
+        if hasattr(self, "cam_thread") and self.cam_thread.is_alive():
+            # Verifica si el hilo actual NO es el hilo de la cámara
+            if threading.current_thread() != self.cam_thread:
+                self.cam_thread.join(timeout=2)
 
     def _capture_loop(self):
         delay_between_frames = 1.0 / self.fps
@@ -64,6 +66,7 @@ class RunCamera:
 
             if not ret:
                 self.loggerReport.logger.warning("Failed to read frame")
+                self.stop()
                 break
 
             with self.lock:

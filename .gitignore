@@ -1,6 +1,7 @@
 # Ignorar videos y archivos grandes
 *.mp4
 *.zip
+*.png
 
 # Ignorar entornos virtuales de Python
 .venv/

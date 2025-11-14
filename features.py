@@ -1,8 +1,11 @@
 import cv2
 import numpy as np
+from typing import Dict, Tuple, Any
 
 
-def extract_features(binary, ext_contour):
+def extract_features(
+    binary: np.ndarray, ext_contour: np.ndarray | None
+) -> Dict[str, Any]:
     if ext_contour is None or len(ext_contour) < 3:
         # Retorna métricas vacías si el contorno no es válido
         return {
@@ -56,8 +59,7 @@ def extract_features(binary, ext_contour):
     }
 
 
-def classify_piece(features):
-
+def classify_piece(features: Dict[str, Any]) -> Tuple[str, str]:
     # Clasifico la pieza en Anillo, Arandela, Tensor o Zeta y determino si está Buena o Defectuosa.
 
     # (Hay que mejorar de acuerdo a las formas de las piezas y tal vez agregar más features :))
