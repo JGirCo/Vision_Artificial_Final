@@ -338,4 +338,4 @@ def main(video_source) -> None:
 
 if __name__ == "__main__":
     # process_videos()
-    main("./Vid_Piezas/Zetas/Zetas_Buenas.mp4")
+    main("./Vid_Piezas/Zetas/Zetas_Malas.mp4")
