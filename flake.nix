@@ -12,16 +12,16 @@
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
-          overlays = [
-            (final: prev: {
-              # 🚀 Override opencv4 to explicitly enable CUDA support
-              opencv4 = prev.opencv4.override {
-                enableGtk3 = true;
-                enablePython = true;
-                enableCuda = true;
-              };
-            })
-          ];
+          # overlays = [
+          #   (final: prev: {
+          #     # 🚀 Override opencv4 to explicitly enable CUDA support
+          #     opencv4 = prev.opencv4.override {
+          #       enableGtk3 = true;
+          #       enablePython = true;
+          #       enableCuda = true;
+          #     };
+          #   })
+          # ];
         };
         # Create a Python environment with the CUDA-enabled OpenCV
         python-with-opencv = pkgs.python3.withPackages (ps: [ ps.opencv4 ]);
@@ -38,10 +38,8 @@
             pkgs.python3Packages.matplotlib
             pkgs.python3Packages.scikit-learn
             pkgs.python3Packages.tkinter
+            pkgs.python3Packages.colorlog
 
-            pkgs.cudaPackages.cudatoolkit
-            pkgs.cudaPackages.cudnn
-            pkgs.linuxPackages.nvidia_x11
           ];
 
           shellHook = ''

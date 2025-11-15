@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.font as font
 from tkinter import ttk
+import time
 
 from piece_classifier import Classifier
 import cv2
@@ -9,6 +10,7 @@ from logger import Logger
 from PIL import Image, ImageTk
 
 IMAGE_SIZE = (720, 480)
+OPTION_SIZE = (240, 240)
 
 
 class Application(tk.Frame):
@@ -26,20 +28,45 @@ class Application(tk.Frame):
         self.arandelas = 0
         self.rotas = 0
         self.master.geometry("%dx%d" % (self.width, self.height))
+
+        self.notebook = ttk.Notebook(self.master)
+        self.notebook.pack(expand=True, fill="both")
+
+        self.tab_configuracion = tk.Frame(
+            self.notebook, width=self.width, height=self.height
+        )
+        self.tab_configuracion.pack(fill="both", expand=True)
+
+        self.tab_funcionamiento = tk.Frame(
+            self.notebook, width=self.width, height=self.height
+        )
+        self.tab_funcionamiento.pack(fill="both", expand=True)
+
+        self.tab_informes = tk.Frame(
+            self.notebook, width=self.width, height=self.height
+        )
+        self.tab_informes.pack(fill="both", expand=True)
+
+        self.notebook.add(self.tab_configuracion, text="Configuración")
+        self.notebook.add(self.tab_funcionamiento, text="Funcionamiento")
+        self.notebook.add(self.tab_informes, text="Informes")
+
         self.createWidgets()
         self.createFeedFrame()
         self.createPieceFrame()
         self.createStateFrame()
         self.createTableFrame()
+        self.createTimeFrame()
+
+        names, images = self.getOptions()
+        self.createOptionFrames(images, names)
         self.master.mainloop()
 
     def createWidgets(self):
         self.fontLabelText = font.Font(family="Helvetica", size=8)
-        # self.labelNameCamera = tk.Label(self.master, text="camera 1", fg="#000000")
-        # self.labelNameCamera["font"] = self.fontLabelText
-        # self.labelNameCamera.place(x=10, y=10)
+        # Parent changed from self.master to self.tab_main
         self.btInitCamera = tk.Button(
-            self.master,
+            self.tab_funcionamiento,
             text="Iniciar Camara",
             bg="#007a39",
             fg="#ffffff",
@@ -48,8 +75,9 @@ class Application(tk.Frame):
         )
         self.btInitCamera.place(x=10, y=90 + IMAGE_SIZE[1] * 2)
 
+        # Parent changed from self.master to self.tab_main
         self.btStopCamera = tk.Button(
-            self.master,
+            self.tab_funcionamiento,
             text="Parar camara",
             bg="#7a0039",
             fg="#ffffff",
@@ -58,92 +86,159 @@ class Application(tk.Frame):
         )
         self.btStopCamera.place(x=10 + IMAGE_SIZE[0], y=90 + IMAGE_SIZE[1] * 2)
 
+    def getOptions(self):
+        images = ["zeta.jpeg", "tensor.jpeg", "anillo.jpeg", "arandela.jpeg"]
+        names = ["zetas", "tensors", "anillos", "arandelas"]
+        return names, images
+
+    def createOptionFrames(self, images, names):
+        if not hasattr(self, "optionLabel_by_name"):
+            self.optionLabel = {}
+        if not hasattr(self, "optionCheck_by_name"):
+            self.optionCheck = {}
+        if not hasattr(self, "optionVar_by_name"):
+            self.optionVar = {}
+
+        for i, name in enumerate(names):
+            imageTk = self.readImage(images[i])
+            self.optionLabel[name] = tk.Label(
+                self.tab_configuracion, borderwidth=2, relief="solid"
+            )
+            self.optionLabel[name].place(x=(10 + OPTION_SIZE[0]) * i, y=30)
+            self.optionLabel[name].configure(image=imageTk)
+            self.optionLabel[name].image = imageTk
+
+            self.optionVar[name] = tk.BooleanVar(value=False)
+            self.optionCheck[name] = (
+                tk.Checkbutton(  # Actually, it should be a simple check
+                    self.tab_configuracion,
+                    text=name,
+                    variable=self.optionVar[name],
+                    onvalue=True,
+                    offvalue=False,
+                    anchor="w",
+                    relief="groove",
+                    padx=10,
+                    pady=5,
+                    font=font.Font(family="Helvetica", size=32),
+                )
+            )
+            self.optionCheck[name].place(
+                x=(10 + OPTION_SIZE[0]) * i, y=60 + OPTION_SIZE[1]
+            )
+            self.optionCheck[name].configure(width=10, height=5)
+
+    def readImage(self, file):
+        img = Image.open(file)
+        resized_img = img.resize(OPTION_SIZE, Image.LANCZOS)
+
+        imageTk = ImageTk.PhotoImage(resized_img)
+        return imageTk
+
     def createFeedFrame(self):
-        self.labelVideo_1 = tk.Label(self.master, borderwidth=2, relief="solid")
+        # Parent changed from self.master to self.tab_main
+        self.labelVideo_1 = tk.Label(
+            self.tab_funcionamiento, borderwidth=2, relief="solid"
+        )
         self.labelVideo_1.place(x=10, y=30)
         imageTk = self.createImageZeros()
         self.labelVideo_1.configure(image=imageTk)
         self.labelVideo_1.image = imageTk
 
     def createPieceFrame(self):
-        self.labelVideo_2 = tk.Label(self.master, borderwidth=2, relief="solid")
+        # Parent changed from self.master to self.tab_main
+        self.labelVideo_2 = tk.Label(
+            self.tab_funcionamiento, borderwidth=2, relief="solid"
+        )
         self.labelVideo_2.place(x=IMAGE_SIZE[0] + 20, y=30)
         imageTk = self.createImageZeros()
         self.labelVideo_2.configure(image=imageTk)
         self.labelVideo_2.image = imageTk
 
     def createStateFrame(self):
-        # 1. Create the Frame container with pixel dimensions and background
+        # Parent changed from self.master to self.tab_main
         self.frameState = tk.Frame(
-            self.master,
+            self.tab_funcionamiento,
             width=IMAGE_SIZE[0],
             height=IMAGE_SIZE[1],
             background="light yellow",
         )
         self.frameState.place(x=IMAGE_SIZE[0] + 20, y=IMAGE_SIZE[1] + 60)
 
-        # 2. Create the Label inside the Frame
+        # Parent remains self.frameState (correct)
         self.labelStateText = tk.Label(
-            self.frameState,  # Parent is the Frame
+            self.frameState,
             text="Esperando Pieza",
-            background="light yellow",  # *** CRITICAL: Ensure this matches the frame's background ***
+            background="light yellow",
             foreground="orange",
             font=(
                 "Helvetica",
                 32,
                 "bold",
-            ),  # *** Increased font size and bolded for visibility ***
-            padx=10,  # Add some internal horizontal padding
-            pady=10,  # Add some internal vertical padding
+            ),
+            padx=10,
+            pady=10,
         )
-
-        # 3. Center the Label
-        # relx=0.5, rely=0.5 sets the center of the Label to the center of the Frame
         self.labelStateText.place(relx=0.5, rely=0.5, anchor="center")
 
-    def createTableFrame(self):
-        self.frameState = tk.Frame(
-            self.master,
+    def createTimeFrame(self):
+        # Parent changed from self.master to self.tab_main
+        self.frameTime = tk.Frame(
+            self.tab_funcionamiento,
             width=IMAGE_SIZE[0],
             height=IMAGE_SIZE[1],
-            background="white",  # Using white background for the table area
         )
-        self.frameState.place(x=10, y=IMAGE_SIZE[1] + 60)
+        self.frameTime.place(x=10 + 20, y=IMAGE_SIZE[1] + 60)
+
+        # Parent remains self.frameState (correct)
+        self.labelTimeText = tk.Label(
+            self.frameTime,
+            text="Esperando Pieza",
+            font=(
+                "Helvetica",
+                32,
+                "bold",
+            ),
+            padx=10,
+            pady=10,
+        )
+
+        self.labelTimeText.place(relx=0.5, rely=0.5, anchor="center")
+
+    def createTableFrame(self):
+        # Parent changed from self.master to self.tab_main
+        self.frameState = tk.Frame(
+            self.tab_informes,
+            width=IMAGE_SIZE[0],
+            height=IMAGE_SIZE[1],
+            background="white",
+        )
+        self.frameState.place(x=10, y=30)
         style = ttk.Style(self.master)
 
-        # Configure the style for the Treeview rows (body text)
         style.configure("mystyle.Treeview", font=("Helvetica", 20, "bold"))
-
-        # Configure the style for the Treeview headings (header text)
         style.configure("mystyle.Treeview.Heading", font=("Helvetica", 24, "bold"))
+        style.configure(
+            "mystyle.Treeview", font=("Helvetica", 20, "bold")
+        )  # Data rows font
+        style.configure("mystyle.Treeview.Heading", font=("Helvetica", 24, "bold"))  #
 
-        # We need to stop the frame from shrinking around the Treeview
-        # Since we use .place for the frame in the master, we can use
-        # .pack or .grid inside the frame and use propagation control.
         self.frameState.grid_propagate(False)
 
         columns = ("#1", "#2")
         self.tree = ttk.Treeview(
-            self.frameState,
-            columns=columns,
-            show="headings",  # Only show the column headings, not the default tree column
+            self.frameState, columns=columns, show="headings", style="mystyle.Treeview"
         )
 
-        # 3. Define Column Headings and Widths (Example)
         self.tree.heading("#1", text="Piece type")
         self.tree.heading("#2", text="Count")
 
-        # Adjust column widths (can be tricky, but we'll try to scale them)
-        frame_width = IMAGE_SIZE[0]  # 720
+        frame_width = IMAGE_SIZE[0]
         self.tree.column("#1", width=frame_width // 2, anchor="w")
         self.tree.column("#2", width=frame_width // 2, anchor="center")
 
-        # 4. Insert Example Data (Replace this with your actual data)
-
-        # 5. Place the Treeview using .grid to fill the entire Frame area
         self.tree.grid(row=0, column=0, sticky="nsew")
 
-        # Configure grid weight to ensure the Treeview expands to fill the Frame
         self.frameState.grid_columnconfigure(0, weight=1)
         self.frameState.grid_rowconfigure(0, weight=1)
 
@@ -177,6 +272,7 @@ class Application(tk.Frame):
             print(str(e))
 
     def eval_frame(self):
+        start_time = time.time()
         piece = self.camera_1.read_piece()
         self.logReport.debug("Pieza en frame")
         imageTkPiece = self.convertToFrameTk(
@@ -206,6 +302,8 @@ class Application(tk.Frame):
             ("Arandelas", self.arandelas),
             ("Piezas rotas", self.rotas),
         ]
+        processing_time = time.time() - start_time
+        self.updateTimeLabel(processing_time)
         self.updateTable(new_data)
 
     def updateTable(self, new_data):
@@ -227,7 +325,14 @@ class Application(tk.Frame):
             )
             self.frameState.config(background=background_color)
         except AttributeError:
-            # Handle case where the label might not be fully initialized yet
+            print("Error: labelStateText is not yet defined.")
+
+    def updateTimeLabel(self, processing_time):
+        try:
+            self.labelTimeText.config(
+                text=f"Tiempo de procesamiento = \n{processing_time:.3f} Segundos"
+            )
+        except AttributeError:
             print("Error: labelStateText is not yet defined.")
 
 
@@ -235,8 +340,6 @@ def pad_frame(frame, target_width, target_height):
     H_in, W_in = frame.shape
 
     if W_in > target_width or H_in > target_height:
-        # For this request (adding padding), we simply return the original
-        # or handle cropping if necessary, but assuming input is smaller/equal for padding.
         print(
             "Warning: Input frame is larger than target. Cropping might be necessary instead of padding."
         )
@@ -258,7 +361,7 @@ def pad_frame(frame, target_width, target_height):
         pad_left,
         pad_right,
         cv2.BORDER_CONSTANT,
-        value=0,  # Since it's grayscale, the value is a single 0
+        value=0,
     )
 
     return padded_frame
