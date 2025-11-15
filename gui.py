@@ -216,12 +216,14 @@ class Application(tk.Frame):
         self.frameState.place(x=10, y=30)
         style = ttk.Style(self.master)
 
-        style.configure("mystyle.Treeview", font=("Helvetica", 20, "bold"))
+        style.configure(
+            "mystyle.Treeview", font=("Helvetica", 20, "bold"), rowheight=40
+        )
         style.configure("mystyle.Treeview.Heading", font=("Helvetica", 24, "bold"))
         style.configure(
             "mystyle.Treeview", font=("Helvetica", 20, "bold")
         )  # Data rows font
-        style.configure("mystyle.Treeview.Heading", font=("Helvetica", 24, "bold"))  #
+        style.configure("mystyle.Treeview.Heading", font=("Helvetica", 24, "bold"))
 
         self.frameState.grid_propagate(False)
 
